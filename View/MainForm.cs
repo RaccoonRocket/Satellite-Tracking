@@ -15,7 +15,8 @@ namespace Course_proj
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.White);
-            Field field = new Field(pictureBox1, matrix);*/
+            Field field = new Field(pictureBox1, matrix);
+        }*/
 
             public MainForm()
         {

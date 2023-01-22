@@ -1,3 +1,5 @@
+using Course_proj.Model;
+
 namespace Course_proj
 {
     internal static class Program
