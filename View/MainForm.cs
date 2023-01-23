@@ -39,32 +39,58 @@ namespace Course_proj
             --Data.sizeOfGrid;
         }
 
-        private void button3_Click(object sender, EventArgs e) // example
+        private void button3_Click(object sender, EventArgs e) // example 1
         {
-            if (dataGridView1.ColumnCount < Data.maxExample)
+            if (dataGridView1.ColumnCount < Data.maxExample1)
             {
-                while (dataGridView1.ColumnCount != Data.maxExample)
+                while (dataGridView1.ColumnCount != Data.maxExample1)
                 {
                     button1_Click(sender, e);
                 }
             }
-            else if (Data.maxExample < dataGridView1.ColumnCount)
+            else if (Data.maxExample1 < dataGridView1.ColumnCount)
             {
-                while (dataGridView1.ColumnCount != Data.maxExample)
+                while (dataGridView1.ColumnCount != Data.maxExample1)
                 {
                     button2_Click(sender, e);
                 }
             }
             
-            for (int i = 0; i < Data.maxExample; ++i)
-                for (int j = 0; j < Data.maxExample; ++j)
-                    dataGridView1.Rows[i].Cells[j].Value = Data.exampleNetwork[i, j];
+            for (int i = 0; i < Data.maxExample1; ++i)
+                for (int j = 0; j < Data.maxExample1; ++j)
+                    dataGridView1.Rows[i].Cells[j].Value = Data.example1Network[i, j];
 
             // numericUpDown1.Value = 0;
-            Data.network = Data.exampleNetwork;
+            Data.network = Data.example1Network;
             Data.mainVertex = 0;
-            Data.sizeOfGrid = Data.maxExample;
+            Data.sizeOfGrid = Data.maxExample1;
+        }
 
+        private void button6_Click(object sender, EventArgs e) // example 2
+        {
+            if (dataGridView1.ColumnCount < Data.maxExample2)
+            {
+                while (dataGridView1.ColumnCount != Data.maxExample2)
+                {
+                    button1_Click(sender, e);
+                }
+            }
+            else if (Data.maxExample2 < dataGridView1.ColumnCount)
+            {
+                while (dataGridView1.ColumnCount != Data.maxExample2)
+                {
+                    button2_Click(sender, e);
+                }
+            }
+
+            for (int i = 0; i < Data.maxExample2; ++i)
+                for (int j = 0; j < Data.maxExample2; ++j)
+                    dataGridView1.Rows[i].Cells[j].Value = Data.example2Network[i, j];
+
+            // numericUpDown1.Value = 0;
+            Data.network = Data.example2Network;
+            Data.mainVertex = 0;
+            Data.sizeOfGrid = Data.maxExample2;
         }
 
         private void button4_Click(object sender, EventArgs e) // maxflow & cut
@@ -144,7 +170,7 @@ namespace Course_proj
         private void infoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Using \"+\" and \"-\" build a grid and enter the cluster.\n" +
-                "Select the main vertex and click \"Display network\".\n" +
+                "(Select the main vertex and) click \"Display network\".\n" +
                 "The cluster is converted into a streaming network and displayed on the screen.\n" +
                 "By clicking on the \"Max flow and cut\" you will find out this.\n" +
                 "Or don't bother and click on \"Example\", on the prepared flow network.", "INFO");

@@ -40,6 +40,7 @@
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.infoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -90,21 +91,21 @@
             // 
             // button3
             // 
-            this.button3.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button3.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button3.Location = new System.Drawing.Point(466, 767);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(270, 50);
+            this.button3.Size = new System.Drawing.Size(132, 55);
             this.button3.TabIndex = 6;
-            this.button3.Text = "Example";
+            this.button3.Text = "Example 1";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button4.Location = new System.Drawing.Point(466, 839);
+            this.button4.Location = new System.Drawing.Point(466, 834);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(270, 50);
+            this.button4.Size = new System.Drawing.Size(270, 55);
             this.button4.TabIndex = 7;
             this.button4.Text = "Max flow and cut";
             this.button4.UseVisualStyleBackColor = true;
@@ -163,11 +164,23 @@
             this.infoToolStripMenuItem.Text = "Info";
             this.infoToolStripMenuItem.Click += new System.EventHandler(this.infoToolStripMenuItem_Click);
             // 
+            // button6
+            // 
+            this.button6.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button6.Location = new System.Drawing.Point(604, 767);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(132, 55);
+            this.button6.TabIndex = 10;
+            this.button6.Text = "Example 2";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1582, 1003);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -202,5 +215,6 @@
         private ToolStripMenuItem restartToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem infoToolStripMenuItem;
+        private Button button6;
     }
 }
