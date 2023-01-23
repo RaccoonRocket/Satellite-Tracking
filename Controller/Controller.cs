@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-// using Course_proj.Model;
 
 namespace Course_proj.Controller
 {
@@ -41,7 +40,7 @@ namespace Course_proj.Controller
     {
         public static void FlowNetwork(int[,] mtx)
         {
-            // FlowNetwork.
+            
         }
 
     }
