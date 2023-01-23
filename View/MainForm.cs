@@ -8,24 +8,9 @@ namespace Course_proj
 {
     public partial class MainForm : Form
     {
-        /*private int[,] matrix;
-        public Form1(int[,] matrix)
-        {
-            InitializeComponent();
-            this.matrix = matrix;
-        }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.Clear(Color.White);
-            Field field = new Field(pictureBox1, matrix);
-        }*/
-
         public MainForm()
         {
             InitializeComponent();
-
-            // pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -90,7 +75,8 @@ namespace Course_proj
             }
             else
             {
-                MessageBox.Show($"Max Flow: {ControllerMaxFlow.getMaxFlow().ToString()}\nCut: {ControllerCut.getCut().ToString()}");
+                MessageBox.Show($"Max Flow: {ControllerMaxFlow.getMaxFlow().ToString()}\n" +
+                    $"Cut: {ControllerCut.getCut().ToString()}");
                 String str = null;
                 for (int i = 0; i < Data.sizeOfGrid + 1; ++i)
                 {
@@ -109,20 +95,38 @@ namespace Course_proj
 
         private void button5_Click(object sender, EventArgs e)
         {
+            Data.sizeOfGrid = dataGridView1.ColumnCount;
+            Data.mainVertex = (int)numericUpDown1.Value;
 
-
-            /*using (var g = Graphics.FromImage(pictureBox1.Image))
+            if (dataGridView1.ColumnCount < (int)numericUpDown1.Value)
             {
-                // pictureBox1_Paint(sender, e);
-                *//*g.DrawEllipse(Pens.Blue, 10, 10, 100, 100);
-                pictureBox1.Refresh();*//*
-            }*/
-        }
+                MessageBox.Show("Wrong data!");
+                Application.Restart();
+            }
 
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            /*e.Graphics.Clear(Color.White);
-            Field field = new Field(pictureBox1, Data.network);*/
+            Data.cluster = new int[Data.sizeOfGrid, Data.sizeOfGrid];
+
+            // Перенос строк из формы в матрицу Cluster
+            for (int i = 0; i < Data.sizeOfGrid; ++i)
+            {
+                for (int j = 0; j < Data.sizeOfGrid; ++j)
+                {
+                    if (dataGridView1.Rows[i].Cells[j].Value != null)
+                        Data.cluster[i, j] = int.Parse(dataGridView1.Rows[i].Cells[j].Value.ToString());
+                    else
+                        Data.cluster[i, j] = 0;
+                }
+            }
+
+            ControllerTransform.Transformation();
+
+
+            // Drawing component and drawing area
+            PaintEventArgs p = new PaintEventArgs(pictureBox1.CreateGraphics(), pictureBox1.Bounds); 
+            p.Graphics.Clear(Color.White);
+            Field field = new Field(pictureBox1, Data.network);
+            field.Paint(p);
+
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)

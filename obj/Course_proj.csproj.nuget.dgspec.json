@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Natrix\\Desktop\\Course_proj\\Course_proj\\Course_proj.csproj": {}
+    "C:\\Users\\Natrix\\source\\repos\\Course_Project\\Course_proj.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Natrix\\Desktop\\Course_proj\\Course_proj\\Course_proj.csproj": {
+    "C:\\Users\\Natrix\\source\\repos\\Course_Project\\Course_proj.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Natrix\\Desktop\\Course_proj\\Course_proj\\Course_proj.csproj",
+        "projectUniqueName": "C:\\Users\\Natrix\\source\\repos\\Course_Project\\Course_proj.csproj",
         "projectName": "Course_proj",
-        "projectPath": "C:\\Users\\Natrix\\Desktop\\Course_proj\\Course_proj\\Course_proj.csproj",
+        "projectPath": "C:\\Users\\Natrix\\source\\repos\\Course_Project\\Course_proj.csproj",
         "packagesPath": "C:\\Users\\Natrix\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Natrix\\Desktop\\Course_proj\\Course_proj\\obj\\",
+        "outputPath": "C:\\Users\\Natrix\\source\\repos\\Course_Project\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Natrix\\AppData\\Roaming\\NuGet\\NuGet.Config",

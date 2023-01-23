@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Course_proj.Controller
 {
-    public static class Controller
+    public static class ControllerTransform
     {
         public static void Transformation()
         {
@@ -36,12 +36,11 @@ namespace Course_proj.Controller
         }
     }
 
-    public static class Display
+    public static class ControllerDisplay
     {
         public static void FlowNetwork(int[,] mtx)
         {
-            
-        }
 
+        }
     }
 }
