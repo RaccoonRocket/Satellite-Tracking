@@ -8,7 +8,7 @@ namespace Course_proj.Model
 {
     internal static class Data
     {
-        public static int nMax = 30;
+        public static readonly int nMax = 30;
         public static int sizeOfGrid { get; set; }
         public static int mainVertex { get; set; }
 
@@ -27,15 +27,34 @@ namespace Course_proj.Model
         {
             get
             {
-                return StreamingNetwork;
+                return FlowNetwork;
             }
             set
             {
-                StreamingNetwork = value;
+                FlowNetwork = value;
             }
         }
 
-        private static int[,] StartCluster = null; /*new int[nMax, nMax];*/
-        private static int[,] StreamingNetwork = null; /* new int[nMax + 1, nMax + 1];*/
+        private static int[,] StartCluster = null;
+        private static int[,] FlowNetwork = null;
+
+
+        // Example:
+        public static readonly int maxExample = 7;
+        public static int[,] exampleNetwork
+        {
+            get { return Example; }
+        }
+
+        private static int[,] Example =
+        {
+            { 0, 9, 3, 0, 0, 5, 0 },
+            { 0, 0, 0, 10, 0, 0, 0 },
+            { 0, 0, 0, 0, 10, 0, 0 },
+            { 0, 0, 0, 0, 0, 3, 8 },
+            { 0, 0, 0, 0, 0, 0, 4 },
+            { 0, 0, 0, 0, 4, 0, 6 },
+            { 0, 0, 0, 0, 0, 0, 0 }
+        };
     }
 }
