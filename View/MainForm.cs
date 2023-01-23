@@ -79,6 +79,7 @@ namespace Course_proj
             Data.network = Data.exampleNetwork;
             Data.mainVertex = 0;
             Data.sizeOfGrid = Data.maxExample;
+
         }
 
         private void button4_Click(object sender, EventArgs e) // maxflow & cut
