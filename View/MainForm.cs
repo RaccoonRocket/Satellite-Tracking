@@ -20,22 +20,22 @@ namespace Course_proj
 
         private void button1_Click(object sender, EventArgs e) // +
         {
-            dataGridView1.Columns.Add("", $"{Data.sizeOfGrid}");
+            dataGridView1.Columns.Add("", $"{Data.sizeOfGrid + 1}");
             dataGridView1.Rows.Add();
             ++Data.sizeOfGrid;
         }
 
         private void button2_Click(object sender, EventArgs e) // -
         {
-            if ((Data.nMax > 0) && (Data.sizeOfGrid >= 0) && (Data.sizeOfGrid < Data.nMax))
-            {
+            /*if ((Data.nMax > 0) && (Data.sizeOfGrid >= 0) && (Data.sizeOfGrid < Data.nMax))
+            {*/
                 dataGridView1.Columns.RemoveAt(Data.sizeOfGrid - 1);
                 dataGridView1.Rows.RemoveAt(Data.sizeOfGrid - 1);
-            }
+            /*}
             else
             {
                 MessageBox.Show("Error!\n");
-            }
+            }*/
             --Data.sizeOfGrid;
         }
 
@@ -60,7 +60,7 @@ namespace Course_proj
                 for (int j = 0; j < Data.maxExample; ++j)
                     dataGridView1.Rows[i].Cells[j].Value = Data.exampleNetwork[i, j];
 
-            numericUpDown1.Value = 0;
+            // numericUpDown1.Value = 0;
             Data.network = Data.exampleNetwork;
             Data.mainVertex = 0;
             Data.sizeOfGrid = Data.maxExample;
@@ -76,15 +76,17 @@ namespace Course_proj
             else
             {
                 MessageBox.Show($"Max Flow: {ControllerMaxFlow.getMaxFlow().ToString()}\n" +
-                    $"Cut: {ControllerCut.getCut().ToString()}");
-                String str = null;
+                    $"Cut: {ControllerCut.getCut().ToString()}", "Max flow & Cut");
+
+                String? str = null;
                 for (int i = 0; i < Data.sizeOfGrid + 1; ++i)
                 {
                     for (int j = 0; j < Data.sizeOfGrid + 1; ++j)
                         str += Data.network[i, j].ToString() + "\t";
                     str += "\n";
                 }
-                MessageBox.Show($"{str}");
+                MessageBox.Show($"{str}", "Flow network");
+
             }
         }
 
@@ -93,20 +95,20 @@ namespace Course_proj
 
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e) // display network
         {
             Data.sizeOfGrid = dataGridView1.ColumnCount;
-            Data.mainVertex = (int)numericUpDown1.Value;
+            // Data.mainVertex = (int)numericUpDown1.Value;
 
-            if (dataGridView1.ColumnCount < (int)numericUpDown1.Value)
+            /*if (dataGridView1.ColumnCount < (int)numericUpDown1.Value)
             {
                 MessageBox.Show("Wrong data!");
                 Application.Restart();
-            }
+            }*/
 
             Data.cluster = new int[Data.sizeOfGrid, Data.sizeOfGrid];
 
-            // Перенос строк из формы в матрицу Cluster
+            // Transferring lines from a form to a Cluster 
             for (int i = 0; i < Data.sizeOfGrid; ++i)
             {
                 for (int j = 0; j < Data.sizeOfGrid; ++j)
@@ -119,10 +121,10 @@ namespace Course_proj
             }
 
             ControllerTransform.Transformation();
-
+            
 
             // Drawing component and drawing area
-            PaintEventArgs p = new PaintEventArgs(pictureBox1.CreateGraphics(), pictureBox1.Bounds); 
+            PaintEventArgs p = new PaintEventArgs(pictureBox1.CreateGraphics(), pictureBox1.Bounds);
             p.Graphics.Clear(Color.White);
             Field field = new Field(pictureBox1, Data.network);
             field.Paint(p);

@@ -9,12 +9,14 @@ namespace Course_proj.Model
     internal static class ClusterToNetwork
     {
         // List<int> list = new List<int>();
-        static Dictionary<int, int> list = new Dictionary<int, int>();
+        static Dictionary<int, int>? list; // = new Dictionary<int, int>();
 
 
         // Finding end vertex
         public static int[,] DoNetwork(int[,] cluster)
         {
+            list = new Dictionary<int, int>();
+
             bool flag;
             int sum;
 
@@ -65,6 +67,8 @@ namespace Course_proj.Model
                 int baz = list[i.Key];
                 network[i.Key, network.GetLength(0) - 1] = i.Value;
             }
+
+            list = null;
 
             return network;
         }
