@@ -20,23 +20,26 @@ namespace Course_proj
 
         private void button1_Click(object sender, EventArgs e) // +
         {
-            dataGridView1.Columns.Add("", $"{Data.sizeOfGrid + 1}");
-            dataGridView1.Rows.Add();
-            ++Data.sizeOfGrid;
+            if (Data.sizeOfGrid < Data.nMax)
+            {
+                dataGridView1.Columns.Add("", $"{Data.sizeOfGrid + 1}");
+                dataGridView1.Rows.Add();
+                ++Data.sizeOfGrid;
+            }
+            else
+                MessageBox.Show("Error!\n");
         }
 
         private void button2_Click(object sender, EventArgs e) // -
         {
-            /*if ((Data.nMax > 0) && (Data.sizeOfGrid >= 0) && (Data.sizeOfGrid < Data.nMax))
-            {*/
+            if (Data.sizeOfGrid > 1)
+            {
                 dataGridView1.Columns.RemoveAt(Data.sizeOfGrid - 1);
                 dataGridView1.Rows.RemoveAt(Data.sizeOfGrid - 1);
-            /*}
+                --Data.sizeOfGrid;
+            }
             else
-            {
                 MessageBox.Show("Error!\n");
-            }*/
-            --Data.sizeOfGrid;
         }
 
         private void button3_Click(object sender, EventArgs e) // example 1
@@ -101,6 +104,28 @@ namespace Course_proj
             }
             else
             {
+                //===========================================
+                Data.sizeOfGrid = dataGridView1.ColumnCount;
+                // Data.mainVertex = (int)numericUpDown1.Value;
+                /*if (dataGridView1.ColumnCount < (int)numericUpDown1.Value)
+                {
+                    MessageBox.Show("Wrong data!");
+                    Application.Restart();
+                }*/
+                Data.cluster = new int[Data.sizeOfGrid, Data.sizeOfGrid];
+                for (int i = 0; i < Data.sizeOfGrid; ++i)
+                {
+                    for (int j = 0; j < Data.sizeOfGrid; ++j)
+                    {
+                        if (dataGridView1.Rows[i].Cells[j].Value != null)
+                            Data.cluster[i, j] = int.Parse(dataGridView1.Rows[i].Cells[j].Value.ToString());
+                        else
+                            Data.cluster[i, j] = 0;
+                    }
+                }
+                ControllerTransform.Transformation();
+                //===========================================
+
                 MessageBox.Show($"Max Flow: {ControllerMaxFlow.getMaxFlow().ToString()}\n" +
                     $"Cut: {ControllerCut.getCut().ToString()}", "Max flow & Cut");
 
@@ -147,14 +172,13 @@ namespace Course_proj
             }
 
             ControllerTransform.Transformation();
-            
+
 
             // Drawing component and drawing area
             PaintEventArgs p = new PaintEventArgs(pictureBox1.CreateGraphics(), pictureBox1.Bounds);
             p.Graphics.Clear(Color.White);
             Field field = new Field(pictureBox1, Data.network);
             field.Paint(p);
-
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
