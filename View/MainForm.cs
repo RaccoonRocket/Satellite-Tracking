@@ -91,9 +91,9 @@ namespace Course_proj
                     dataGridView1.Rows[i].Cells[j].Value = Data.example2Network[i, j];
 
             // numericUpDown1.Value = 0;
-            Data.network = Data.example2Network;
+            /*Data.network = Data.example2Network;
             Data.mainVertex = 0;
-            Data.sizeOfGrid = Data.maxExample2;
+            Data.sizeOfGrid = Data.maxExample2;*/
         }
 
         private void button4_Click(object sender, EventArgs e) // maxflow & cut
