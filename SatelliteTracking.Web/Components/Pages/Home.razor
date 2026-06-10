@@ -1,0 +1,566 @@
+@page "/"
+
+<PageTitle>Satellite Tracking</PageTitle>
+
+<main class="app-shell">
+    <section class="workspace">
+        <div class="matrix-panel">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Flow network simulator</p>
+                    <h1>Satellite Tracking</h1>
+                </div>
+                <div class="status-strip" aria-label="Current grid summary">
+                    <span>@GridSize x @GridSize</span>
+                    <span>Start @(SourceVertex + 1)</span>
+                    <span>Max grid @FlowNetworkAnalyzer.MaxGridSize</span>
+                </div>
+            </header>
+
+            <div class="toolbar" aria-label="Matrix tools">
+                <button class="icon-button" title="Decrease grid size" @onclick="DecreaseGrid">-</button>
+                <button class="icon-button" title="Increase grid size" @onclick="IncreaseGrid">+</button>
+                <button @onclick="LoadExample1">Example 1</button>
+                <button @onclick="LoadExample2">Example 2</button>
+                <button @onclick="ClearMatrix">Clear</button>
+                <label class="select-control">
+                    <span>Start vertex</span>
+                    <select value="@SourceVertex" @onchange="OnSourceChanged">
+                        @for (var i = 0; i < GridSize; i++)
+                        {
+                            <option value="@i">@(i + 1)</option>
+                        }
+                    </select>
+                </label>
+                <button class="primary-action" @onclick="Analyze">Build network</button>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <p class="error-message">@ErrorMessage</p>
+            }
+
+            <div class="matrix-scroll" aria-label="Cluster matrix">
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            @for (var col = 0; col < GridSize; col++)
+                            {
+                                <th>@(col + 1)</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var row = 0; row < GridSize; row++)
+                        {
+                            var currentRow = row;
+                            <tr>
+                                <th>@(currentRow + 1)</th>
+                                @for (var col = 0; col < GridSize; col++)
+                                {
+                                    var currentCol = col;
+                                    <td>
+                                        <input
+                                            aria-label="Capacity from vertex @(currentRow + 1) to vertex @(currentCol + 1)"
+                                            inputmode="numeric"
+                                            min="0"
+                                            type="number"
+                                            value="@Cluster[currentRow, currentCol]"
+                                            @onchange="eventArgs => SetCell(currentRow, currentCol, eventArgs.Value)" />
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <aside class="results-panel">
+            <div class="metric-grid">
+                <div class="metric">
+                    <span>Max flow</span>
+                    <strong>@(Result?.MaxFlow.ToString() ?? "-")</strong>
+                </div>
+                <div class="metric">
+                    <span>Cut</span>
+                    <strong>@(Result?.Cut.ToString() ?? "-")</strong>
+                </div>
+            </div>
+
+            <div class="network-stage" aria-label="Flow network visualization">
+                @if (Result is null)
+                {
+                    <div class="empty-state">
+                        <strong>No network yet</strong>
+                        <span>Build the network to see vertices, capacities, max flow and cut.</span>
+                    </div>
+                }
+                else
+                {
+                    @RenderNetwork(Result.Network)
+                }
+            </div>
+
+            @if (Result is not null)
+            {
+                <details class="network-matrix">
+                    <summary>Flow network matrix</summary>
+                    <div class="matrix-scroll compact">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    @for (var col = 0; col < Result.Network.GetLength(0); col++)
+                                    {
+                                        <th>@(col + 1)</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (var row = 0; row < Result.Network.GetLength(0); row++)
+                                {
+                                    <tr>
+                                        <th>@(row + 1)</th>
+                                        @for (var col = 0; col < Result.Network.GetLength(0); col++)
+                                        {
+                                            <td class="readonly-cell">@Result.Network[row, col]</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+            }
+        </aside>
+    </section>
+</main>
+
+@code {
+    private const int InitialGridSize = 7;
+    private const double SvgWidth = 900;
+    private const double SvgHeight = 560;
+    private const double NodeRadius = 19;
+
+    private int[,] Cluster { get; set; } = SatelliteExamples.Empty(InitialGridSize);
+    private int GridSize { get; set; } = InitialGridSize;
+    private int SourceVertex { get; set; }
+    private FlowAnalysisResult? Result { get; set; }
+    private string? ErrorMessage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadExample1();
+    }
+
+    private void IncreaseGrid()
+    {
+        if (GridSize >= FlowNetworkAnalyzer.MaxGridSize)
+        {
+            ErrorMessage = $"The maximum grid size is {FlowNetworkAnalyzer.MaxGridSize}.";
+            return;
+        }
+
+        ResizeGrid(GridSize + 1);
+    }
+
+    private void DecreaseGrid()
+    {
+        if (GridSize <= 1)
+        {
+            ErrorMessage = "The minimum grid size is 1.";
+            return;
+        }
+
+        ResizeGrid(GridSize - 1);
+    }
+
+    private void LoadExample1()
+    {
+        LoadMatrix(SatelliteExamples.Example1);
+    }
+
+    private void LoadExample2()
+    {
+        LoadMatrix(SatelliteExamples.Example2);
+    }
+
+    private void ClearMatrix()
+    {
+        Cluster = SatelliteExamples.Empty(GridSize);
+        Result = null;
+        ErrorMessage = null;
+    }
+
+    private void Analyze()
+    {
+        try
+        {
+            Result = FlowNetworkAnalyzer.Analyze(Cluster, SourceVertex);
+            ErrorMessage = null;
+        }
+        catch (Exception exception)
+        {
+            Result = null;
+            ErrorMessage = exception.Message;
+        }
+    }
+
+    private void SetCell(int row, int col, object? value)
+    {
+        var rawValue = value?.ToString();
+
+        if (!int.TryParse(rawValue, out var parsedValue) || parsedValue < 0)
+        {
+            Cluster[row, col] = 0;
+            Result = null;
+            ErrorMessage = "Only zero or positive integer capacities are allowed.";
+            return;
+        }
+
+        Cluster[row, col] = parsedValue;
+        Result = null;
+        ErrorMessage = null;
+    }
+
+    private void OnSourceChanged(ChangeEventArgs eventArgs)
+    {
+        if (!int.TryParse(eventArgs.Value?.ToString(), out var sourceVertex))
+        {
+            return;
+        }
+
+        SourceVertex = sourceVertex;
+        Analyze();
+    }
+
+    private void LoadMatrix(int[,] matrix)
+    {
+        GridSize = matrix.GetLength(0);
+        Cluster = CopyMatrix(matrix, GridSize);
+        SourceVertex = 0;
+        Analyze();
+    }
+
+    private void ResizeGrid(int newSize)
+    {
+        Cluster = CopyMatrix(Cluster, newSize);
+        GridSize = newSize;
+        SourceVertex = Math.Min(SourceVertex, GridSize - 1);
+        Result = null;
+        ErrorMessage = null;
+    }
+
+    private static int[,] CopyMatrix(int[,] source, int size)
+    {
+        var copy = new int[size, size];
+        var rows = Math.Min(size, source.GetLength(0));
+        var cols = Math.Min(size, source.GetLength(1));
+
+        for (var row = 0; row < rows; row++)
+        {
+            for (var col = 0; col < cols; col++)
+            {
+                copy[row, col] = source[row, col];
+            }
+        }
+
+        return copy;
+    }
+
+    private RenderFragment RenderNetwork(int[,] network) => builder =>
+    {
+        var sequence = 0;
+        var nodes = BuildNodes(network, SourceVertex);
+        var edges = BuildEdges(network, nodes);
+
+        builder.OpenElement(sequence++, "svg");
+        builder.AddAttribute(sequence++, "class", "network-svg");
+        builder.AddAttribute(sequence++, "viewBox", $"0 0 {SvgWidth} {SvgHeight}");
+        builder.AddAttribute(sequence++, "role", "img");
+        builder.AddAttribute(sequence++, "aria-label", "Flow network graph");
+
+        builder.OpenElement(sequence++, "defs");
+        builder.OpenElement(sequence++, "marker");
+        builder.AddAttribute(sequence++, "id", "arrowhead");
+        builder.AddAttribute(sequence++, "markerWidth", "12");
+        builder.AddAttribute(sequence++, "markerHeight", "8");
+        builder.AddAttribute(sequence++, "refX", "10");
+        builder.AddAttribute(sequence++, "refY", "4");
+        builder.AddAttribute(sequence++, "orient", "auto");
+        builder.AddAttribute(sequence++, "markerUnits", "strokeWidth");
+        builder.OpenElement(sequence++, "path");
+        builder.AddAttribute(sequence++, "d", "M 0 0 L 12 4 L 0 8 z");
+        builder.AddAttribute(sequence++, "class", "arrowhead");
+        builder.CloseElement();
+        builder.CloseElement();
+        builder.CloseElement();
+
+        foreach (var edge in edges)
+        {
+            builder.OpenElement(sequence++, "line");
+            builder.AddAttribute(sequence++, "class", "edge-line");
+            builder.AddAttribute(sequence++, "x1", edge.X1);
+            builder.AddAttribute(sequence++, "y1", edge.Y1);
+            builder.AddAttribute(sequence++, "x2", edge.X2);
+            builder.AddAttribute(sequence++, "y2", edge.Y2);
+            builder.AddAttribute(sequence++, "marker-end", "url(#arrowhead)");
+            builder.CloseElement();
+
+            builder.OpenElement(sequence++, "text");
+            builder.AddAttribute(sequence++, "class", "edge-label");
+            builder.AddAttribute(sequence++, "x", edge.LabelX);
+            builder.AddAttribute(sequence++, "y", edge.LabelY);
+            builder.AddContent(sequence++, edge.Weight);
+            builder.CloseElement();
+        }
+
+        foreach (var node in nodes)
+        {
+            builder.OpenElement(sequence++, "circle");
+            builder.AddAttribute(sequence++, "class", GetNodeClass(node));
+            builder.AddAttribute(sequence++, "cx", node.X);
+            builder.AddAttribute(sequence++, "cy", node.Y);
+            builder.AddAttribute(sequence++, "r", NodeRadius);
+            builder.CloseElement();
+
+            builder.OpenElement(sequence++, "text");
+            builder.AddAttribute(sequence++, "class", "node-label");
+            builder.AddAttribute(sequence++, "x", node.X);
+            builder.AddAttribute(sequence++, "y", node.Y + 5);
+            builder.AddContent(sequence++, node.Label);
+            builder.CloseElement();
+        }
+
+        builder.CloseElement();
+    };
+
+    private static IReadOnlyList<GraphNode> BuildNodes(int[,] network, int sourceVertex)
+    {
+        var nodeCount = network.GetLength(0);
+        var sinkVertex = nodeCount - 1;
+        var layers = BuildStableLayers(network, sinkVertex);
+        var maxLayer = Math.Max(1, layers.Keys.Max());
+        var nodes = new List<GraphNode>(nodeCount);
+
+        for (var layerIndex = 0; layerIndex <= maxLayer; layerIndex++)
+        {
+            var layerNodes = layers.TryGetValue(layerIndex, out var currentLayerNodes)
+                ? currentLayerNodes
+                : [];
+
+            for (var position = 0; position < layerNodes.Length; position++)
+            {
+                var nodeIndex = layerNodes[position];
+                var x = 64 + layerIndex * ((SvgWidth - 128) / maxLayer);
+                var y = GetLayerY(layerNodes.Length, position);
+
+                nodes.Add(new GraphNode(
+                    nodeIndex,
+                    (nodeIndex + 1).ToString(),
+                    x,
+                    y,
+                    nodeIndex == sourceVertex,
+                    nodeIndex == sinkVertex));
+            }
+        }
+
+        return nodes.OrderBy(node => node.Index).ToArray();
+    }
+
+    private static SortedDictionary<int, int[]> BuildStableLayers(int[,] network, int sinkVertex)
+    {
+        var nodeCount = network.GetLength(0);
+        var indegrees = new int[nodeCount];
+        var layers = new int[nodeCount];
+
+        for (var from = 0; from < nodeCount; from++)
+        {
+            for (var to = 0; to < nodeCount; to++)
+            {
+                if (from != to && network[from, to] > 0)
+                {
+                    indegrees[to]++;
+                }
+            }
+        }
+
+        var roots = Enumerable
+            .Range(0, nodeCount - 1)
+            .Where(index => indegrees[index] == 0)
+            .ToHashSet();
+
+        if (roots.Count == 0)
+        {
+            roots.Add(0);
+        }
+
+        for (var iteration = 0; iteration < nodeCount - 1; iteration++)
+        {
+            var changed = false;
+
+            for (var from = 0; from < nodeCount; from++)
+            {
+                for (var to = 0; to < nodeCount; to++)
+                {
+                    if (from == to || network[from, to] == 0 || roots.Contains(to))
+                    {
+                        continue;
+                    }
+
+                    var nextLayer = layers[from] + 1;
+                    if (nextLayer > layers[to])
+                    {
+                        layers[to] = nextLayer;
+                        changed = true;
+                    }
+                }
+            }
+
+            if (!changed)
+            {
+                break;
+            }
+        }
+
+        var rightmostClusterLayer = layers
+            .Where((_, index) => index != sinkVertex)
+            .DefaultIfEmpty(0)
+            .Max();
+        layers[sinkVertex] = Math.Max(1, rightmostClusterLayer + 1);
+
+        var groupedLayers = Enumerable
+            .Range(0, nodeCount)
+            .GroupBy(index => layers[index])
+            .ToDictionary(group => group.Key, group => group.OrderBy(index => index).ToArray());
+
+        return OrderLayers(network, groupedLayers);
+    }
+
+    private static SortedDictionary<int, int[]> OrderLayers(int[,] network, Dictionary<int, int[]> layers)
+    {
+        var orderedLayers = new SortedDictionary<int, int[]>(
+            layers.ToDictionary(pair => pair.Key, pair => pair.Value));
+
+        for (var pass = 0; pass < 3; pass++)
+        {
+            foreach (var layerIndex in orderedLayers.Keys.Skip(1).ToArray())
+            {
+                var previousOrder = BuildOrderMap(orderedLayers[layerIndex - 1]);
+                orderedLayers[layerIndex] = orderedLayers[layerIndex]
+                    .OrderBy(node => GetBarycenter(network, node, previousOrder, incoming: true))
+                    .ThenBy(node => node)
+                    .ToArray();
+            }
+
+            foreach (var layerIndex in orderedLayers.Keys.Reverse().Skip(1).ToArray())
+            {
+                var nextOrder = BuildOrderMap(orderedLayers[layerIndex + 1]);
+                orderedLayers[layerIndex] = orderedLayers[layerIndex]
+                    .OrderBy(node => GetBarycenter(network, node, nextOrder, incoming: false))
+                    .ThenBy(node => node)
+                    .ToArray();
+            }
+        }
+
+        return orderedLayers;
+    }
+
+    private static Dictionary<int, int> BuildOrderMap(int[] layerNodes)
+    {
+        return layerNodes
+            .Select((node, position) => new { node, position })
+            .ToDictionary(item => item.node, item => item.position);
+    }
+
+    private static double GetBarycenter(int[,] network, int node, Dictionary<int, int> neighborOrder, bool incoming)
+    {
+        var positions = new List<int>();
+
+        for (var other = 0; other < network.GetLength(0); other++)
+        {
+            var isNeighbor = incoming ? network[other, node] > 0 : network[node, other] > 0;
+            if (isNeighbor && neighborOrder.TryGetValue(other, out var position))
+            {
+                positions.Add(position);
+            }
+        }
+
+        return positions.Count == 0 ? int.MaxValue : positions.Average();
+    }
+
+    private static double GetLayerY(int layerSize, int position)
+    {
+        if (layerSize <= 1)
+        {
+            return SvgHeight / 2;
+        }
+
+        var step = Math.Min(110, (SvgHeight - 120) / (layerSize - 1));
+        var totalHeight = step * (layerSize - 1);
+
+        return (SvgHeight - totalHeight) / 2 + position * step;
+    }
+
+    private static string GetNodeClass(GraphNode node)
+    {
+        if (node.IsSource)
+        {
+            return "node source-node";
+        }
+
+        if (node.IsSink)
+        {
+            return "node sink-node";
+        }
+
+        return "node";
+    }
+
+    private static IReadOnlyList<GraphEdge> BuildEdges(int[,] network, IReadOnlyList<GraphNode> nodes)
+    {
+        var edges = new List<GraphEdge>();
+
+        for (var row = 0; row < network.GetLength(0); row++)
+        {
+            for (var col = 0; col < network.GetLength(1); col++)
+            {
+                if (row == col || network[row, col] == 0)
+                {
+                    continue;
+                }
+
+                edges.Add(BuildEdge(nodes[row], nodes[col], network[row, col]));
+            }
+        }
+
+        return edges;
+    }
+
+    private static GraphEdge BuildEdge(GraphNode from, GraphNode to, int weight)
+    {
+        var dx = to.X - from.X;
+        var dy = to.Y - from.Y;
+        var length = Math.Max(1, Math.Sqrt(dx * dx + dy * dy));
+        var unitX = dx / length;
+        var unitY = dy / length;
+        var x1 = from.X + unitX * NodeRadius;
+        var y1 = from.Y + unitY * NodeRadius;
+        var x2 = to.X - unitX * (NodeRadius + 7);
+        var y2 = to.Y - unitY * (NodeRadius + 7);
+
+        return new GraphEdge(
+            x1,
+            y1,
+            x2,
+            y2,
+            (from.X + to.X) / 2 + unitY * 10,
+            (from.Y + to.Y) / 2 - unitX * 10,
+            weight);
+    }
+
+    private sealed record GraphNode(int Index, string Label, double X, double Y, bool IsSource, bool IsSink);
+    private sealed record GraphEdge(double X1, double Y1, double X2, double Y2, double LabelX, double LabelY, int Weight);
+}
