@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SatelliteTracking.Core", "SatelliteTracking.Core\SatelliteTracking.Core.csproj", "{8D260971-D0AD-4BE1-9C43-E22C647DC34E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SatelliteTracking.Web", "SatelliteTracking.Web\SatelliteTracking.Web.csproj", "{74E25B12-8059-4D1F-ADC4-CD9ADB54A553}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D260971-D0AD-4BE1-9C43-E22C647DC34E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D260971-D0AD-4BE1-9C43-E22C647DC34E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D260971-D0AD-4BE1-9C43-E22C647DC34E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D260971-D0AD-4BE1-9C43-E22C647DC34E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74E25B12-8059-4D1F-ADC4-CD9ADB54A553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74E25B12-8059-4D1F-ADC4-CD9ADB54A553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74E25B12-8059-4D1F-ADC4-CD9ADB54A553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74E25B12-8059-4D1F-ADC4-CD9ADB54A553}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F253B154-61FF-4D6C-9A82-B843AE94ADB5}
+	EndGlobalSection
+EndGlobal
