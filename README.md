@@ -35,7 +35,13 @@ dotnet run --project SatelliteTracking.Web
 
 The terminal will print the local URL.
 
-## Original example
+## Example
 
 Example of work:
+<img width="1532" height="762" alt="image" src="https://github.com/user-attachments/assets/3e4c7ab5-6c74-40c4-8e91-a6892b69b8fd" />
+
+---
+
+### Original example
+
 ![skrin](https://github.com/Raccoonrocket/Course_Project/assets/90098084/a1a38bd2-fe3d-49a7-a24a-36877169b6b9)
